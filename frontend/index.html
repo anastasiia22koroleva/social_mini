@@ -1,0 +1,1146 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <title>Social Mini</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #e5e7eb;
+      color: #111827;
+    }
+    body {
+      margin: 0;
+      padding: 24px;
+      display: flex;
+      justify-content: center;
+    }
+    .container {
+      max-width: 1200px;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1.0fr 1.6fr;
+      gap: 20px;
+    }
+    @media (max-width: 960px) {
+      body {
+        padding: 12px;
+      }
+      .container {
+        grid-template-columns: 1fr;
+      }
+    }
+    h1, h2, h3 {
+      margin-top: 0;
+    }
+    .card {
+      background: #f9fafb;
+      border-radius: 18px;
+      padding: 18px 20px 20px;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
+    }
+    .card + .card {
+      margin-top: 16px;
+    }
+    label {
+      font-size: 14px;
+      display: block;
+      margin-bottom: 4px;
+      color: #4b5563;
+    }
+    input, textarea {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 9px 11px;
+      border-radius: 10px;
+      border: 1px solid #d1d5db;
+      font-size: 14px;
+      margin-bottom: 10px;
+      outline: none;
+      background: #f9fafb;
+      transition: border 0.15s, box-shadow 0.15s, background 0.15s;
+    }
+    input:focus, textarea:focus {
+      border-color: #4f46e5;
+      box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+      background: #ffffff;
+    }
+    textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+    button {
+      border: none;
+      border-radius: 999px;
+      padding: 8px 16px;
+      font-size: 14px;
+      cursor: pointer;
+      background: #4f46e5;
+      color: white;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.15s, box-shadow 0.15s, transform 0.05s;
+      white-space: nowrap;
+    }
+    button.secondary {
+      background: #e5e7eb;
+      color: #111827;
+    }
+    button.danger {
+      background: #ef4444;
+    }
+    button.small {
+      padding: 4px 10px;
+      font-size: 12px;
+    }
+    button:hover {
+      background: #4338ca;
+      box-shadow: 0 6px 18px rgba(79, 70, 229, 0.4);
+      transform: translateY(-1px);
+    }
+    button.secondary:hover {
+      background: #d1d5db;
+      box-shadow: none;
+      transform: none;
+    }
+    button.danger:hover {
+      background: #b91c1c;
+      box-shadow: 0 6px 18px rgba(248, 113, 113, 0.4);
+    }
+    button:disabled {
+      opacity: 0.55;
+      cursor: default;
+      box-shadow: none;
+      transform: none;
+    }
+    .status {
+      font-size: 13px;
+      margin-top: 6px;
+      min-height: 18px;
+    }
+    .status.ok {
+      color: #15803d;
+    }
+    .status.err {
+      color: #b91c1c;
+    }
+    .muted {
+      font-size: 13px;
+      color: #6b7280;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      background: #eef2ff;
+      color: #3730a3;
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+    .header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+    .right-column {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .posts-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 8px;
+      max-height: 520px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+    .post-card {
+      border-radius: 14px;
+      border: 1px solid #e5e7eb;
+      padding: 10px 12px;
+      background: #ffffff;
+      box-shadow: 0 4px 10px rgba(15, 23, 42, 0.06);
+    }
+    .post-title {
+      font-weight: 600;
+      margin-bottom: 4px;
+      font-size: 15px;
+    }
+    .post-meta {
+      font-size: 12px;
+      color: #6b7280;
+      margin-bottom: 6px;
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .post-content {
+      font-size: 14px;
+      white-space: pre-wrap;
+      margin-bottom: 8px;
+    }
+    .post-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: flex-start;
+    }
+    .like-button {
+      background: #eef2ff;
+      color: #312e81;
+    }
+    .like-button:hover {
+      background: #e0e7ff;
+      box-shadow: none;
+      transform: translateY(-1px);
+    }
+    .like-button.liked {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+    .comments-panel {
+      margin-top: 8px;
+      border-top: 1px solid #e5e7eb;
+      padding-top: 8px;
+      display: none;
+    }
+    .comment-item {
+      font-size: 13px;
+      padding: 4px 0;
+      border-bottom: 1px dashed #e5e7eb;
+    }
+    .comment-meta {
+      color: #6b7280;
+      font-size: 11px;
+      margin-bottom: 2px;
+    }
+    .comment-text {
+      white-space: pre-wrap;
+    }
+    .comments-list {
+      max-height: 180px;
+      overflow-y: auto;
+      margin-bottom: 6px;
+    }
+    .two-column {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .list-box {
+      border-radius: 12px;
+      background: #f3f4f6;
+      padding: 8px 10px;
+      max-height: 140px;
+      overflow-y: auto;
+      font-size: 13px;
+    }
+    .list-box-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: #4b5563;
+      margin-bottom: 4px;
+    }
+    .list-item {
+      padding: 2px 0;
+    }
+    .profile-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .avatar-wrapper {
+      width: 64px;
+      height: 64px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: #e5e7eb;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: #9ca3af;
+    }
+    .avatar-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .profile-name {
+      font-weight: 600;
+      font-size: 16px;
+    }
+    .profile-email {
+      font-size: 13px;
+      color: #6b7280;
+    }
+    .avatar-form-row {
+      margin-top: 8px;
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .avatar-form-row input[type="file"] {
+      padding: 4px;
+      font-size: 12px;
+      background: transparent;
+      border-radius: 999px;
+      border: none;
+      margin-bottom: 0;
+    }
+    .small-note {
+      font-size: 11px;
+      color: #9ca3af;
+    }
+    .edit-indicator {
+      font-size: 12px;
+      color: #92400e;
+      background: #fef3c7;
+      padding: 4px 10px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-left: 8px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <!-- Левая колонка: авторизация/регистрация или профиль -->
+  <div>
+    <!-- Блок авторизации/регистрации (скрывается после входа) -->
+    <div class="card" id="auth-card">
+      <div class="header-row">
+        <div>
+          <h2>Аккаунт</h2>
+          <div class="muted"> </div>
+        </div>
+      </div>
+
+      <div id="auth-block">
+        <h3 style="margin-bottom:6px;">Регистрация</h3>
+        <form id="register-form">
+          <label>Имя пользователя</label>
+          <input id="reg-username" autocomplete="off" required />
+
+          <label>Email</label>
+          <input id="reg-email" type="email" autocomplete="off" required />
+
+          <label>Пароль</label>
+          <input id="reg-password" type="password" required />
+
+          <label>Имя</label>
+          <input id="reg-first-name" autocomplete="off" />
+
+          <label>Фамилия</label>
+          <input id="reg-last-name" autocomplete="off" />
+
+          <button type="submit">Зарегистрироваться</button>
+          <div id="register-status" class="status"></div>
+        </form>
+
+        <hr style="margin:16px -20px; border:none; border-top:1px solid #e5e7eb;" />
+
+        <h3 style="margin-bottom:6px;">Логин</h3>
+        <form id="login-form">
+          <label>Имя пользователя</label>
+          <input id="login-username" autocomplete="username" required />
+
+          <label>Пароль</label>
+          <input id="login-password" type="password" autocomplete="current-password" required />
+
+          <div style="display:flex; gap:8px; margin-top:4px;">
+            <button type="submit">Войти</button>
+          </div>
+
+          <div id="login-status" class="status"></div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Блок профиля (показывается только после входа) -->
+    <div class="card" id="profile-card" style="display:none; margin-top:16px;">
+      <div class="header-row">
+        <div>
+          <h2>Профиль</h2>
+        </div>
+        <div class="pill" id="logged-in-pill">
+          В системе: <strong id="profile-username-pill"></strong>
+        </div>
+      </div>
+
+      <div class="profile-header">
+        <div class="avatar-wrapper">
+          <img id="avatar-img" alt="avatar" style="display:none;" />
+          <span id="avatar-placeholder">🙂</span>
+        </div>
+        <div>
+          <div class="profile-name" id="profile-username">—</div>
+          <div class="profile-email" id="profile-email">—</div>
+        </div>
+      </div>
+
+      <form id="avatar-form" class="avatar-form-row">
+        <input id="avatar-file" type="file" accept="image/*" />
+        <button type="submit" class="small">Обновить аватар</button>
+      </form>
+      <div id="avatar-status" class="status"></div>
+      <div class="small-note">
+        Картинка хранится локально в этом браузере.
+      </div>
+
+      <div class="two-column">
+        <div class="list-box">
+          <div class="list-box-title">Мои подписки</div>
+          <div id="following-list" class="muted">Нет данных.</div>
+        </div>
+        <div class="list-box">
+          <div class="list-box-title">Мои подписчики</div>
+          <div id="followers-list" class="muted">Нет данных.</div>
+        </div>
+      </div>
+
+      <div style="margin-top:12px; display:flex; justify-content:flex-start;">
+        <button type="button" class="secondary" id="logout-btn">Выйти</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Правая колонка: посты -->
+  <div class="right-column">
+    <div class="card">
+      <div class="header-row">
+        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+          <h2>Посты</h2>
+          <span id="edit-indicator" class="edit-indicator" style="display:none;">
+            Редактирование поста <span id="edit-post-id-label"></span>
+          </span>
+        </div>
+        <button type="button" class="secondary" id="refresh-posts-btn">Обновить список</button>
+      </div>
+
+      <form id="create-post-form">
+        <label>Заголовок</label>
+        <input id="post-title" required />
+
+        <label>Текст</label>
+        <textarea id="post-content" required></textarea>
+
+        <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+          <button type="submit" id="create-post-btn">Создать пост</button>
+          <button type="button" class="secondary" id="cancel-edit-btn" style="display:none;">
+            Отменить редактирование
+          </button>
+        </div>
+        <div id="create-post-status" class="status"></div>
+      </form>
+
+      <hr style="margin:16px -20px; border:none; border-top:1px solid #e5e7eb;" />
+
+      <div class="muted" style="margin-bottom:4px;">Список постов</div>
+      <div id="posts-container" class="posts-list"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const API_BASE = ""; // тот же хост/порт, что и бэк
+  let accessToken = null;
+  let currentUsername = null;
+  let currentEmail = null;
+  let currentAvatarUrl = null; // data URL
+  let editingPostId = null;
+
+  function setStatus(id, text, ok = null) {
+    const el = document.getElementById(id);
+    el.textContent = text || "";
+    el.classList.remove("ok", "err");
+    if (ok === true) el.classList.add("ok");
+    if (ok === false) el.classList.add("err");
+  }
+
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+  }
+
+  function formatDate(iso) {
+    if (!iso) return "";
+    try {
+      const d = new Date(iso);
+      return d.toLocaleString();
+    } catch {
+      return iso;
+    }
+  }
+
+  async function apiFetch(path, options = {}) {
+    const headers = options.headers ? { ...options.headers } : {};
+    if (accessToken) {
+      headers["Authorization"] = "Bearer " + accessToken;
+    }
+    return fetch(API_BASE + path, { ...options, headers });
+  }
+
+  // ---------- Аватар: хранилище в localStorage ----------
+  function avatarStorageKey(username) {
+    return "socialMiniAvatar_" + username;
+  }
+
+  function loadAvatarFromStorageFor(username) {
+    if (!username) {
+      currentAvatarUrl = null;
+      return;
+    }
+    try {
+      const stored = localStorage.getItem(avatarStorageKey(username));
+      currentAvatarUrl = stored || null;
+    } catch(e) {
+      console.warn("Cannot access localStorage for avatar", e);
+      currentAvatarUrl = null;
+    }
+  }
+
+  function saveAvatarToStorageFor(username, dataUrl) {
+    if (!username || !dataUrl) return;
+    try {
+      localStorage.setItem(avatarStorageKey(username), dataUrl);
+    } catch(e) {
+      console.warn("Cannot save avatar to localStorage", e);
+    }
+    currentAvatarUrl = dataUrl;
+  }
+
+  function applyAvatarToDOM() {
+    const avatarImg = document.getElementById("avatar-img");
+    const avatarPlaceholder = document.getElementById("avatar-placeholder");
+
+    if (currentAvatarUrl) {
+      avatarImg.src = currentAvatarUrl;
+      avatarImg.style.display = "block";
+      avatarPlaceholder.style.display = "none";
+    } else {
+      avatarImg.src = "";
+      avatarImg.style.display = "none";
+      avatarPlaceholder.style.display = "block";
+    }
+  }
+
+  function updateLayoutByAuthState() {
+    const authCard = document.getElementById("auth-card");
+    const profileCard = document.getElementById("profile-card");
+
+    if (accessToken && currentUsername) {
+      // показываем профиль, скрываем формы
+      authCard.style.display = "none";
+      profileCard.style.display = "block";
+
+      document.getElementById("profile-username-pill").textContent = currentUsername || "";
+      document.getElementById("profile-username").textContent = currentUsername || "—";
+      document.getElementById("profile-email").textContent = currentEmail || "—";
+
+      applyAvatarToDOM();
+    } else {
+      // показываем формы, скрываем профиль
+      authCard.style.display = "block";
+      profileCard.style.display = "none";
+
+      setStatus("login-status", "", null);
+      setStatus("register-status", "", null);
+    }
+  }
+
+  async function loginAndInit(username, password) {
+    const body = new URLSearchParams();
+    body.append("username", username);
+    body.append("password", password);
+
+    const resp = await apiFetch("/auth/token", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body,
+    });
+
+    if (!resp.ok) {
+      const text = await resp.text();
+      throw new Error("Ошибка входа: " + text);
+    }
+
+    const data = await resp.json();
+    accessToken = data.access_token;
+    currentUsername = username;
+
+    // подгружаем аватар из localStorage
+    loadAvatarFromStorageFor(currentUsername);
+
+    updateLayoutByAuthState();
+    setStatus("login-status", "Успешный вход", true);
+
+    await loadPosts();
+    await loadFollowInfo();
+  }
+
+  // ---------- Регистрация ----------
+  document.getElementById("register-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    setStatus("register-status", "Отправка...", null);
+
+    const username = document.getElementById("reg-username").value.trim();
+    const email = document.getElementById("reg-email").value.trim();
+    const password = document.getElementById("reg-password").value;
+    const first_name = document.getElementById("reg-first-name").value.trim() || null;
+    const last_name = document.getElementById("reg-last-name").value.trim() || null;
+
+    const payload = { username, email, password, first_name, last_name };
+
+    try {
+      const resp = await apiFetch("/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const text = await resp.text();
+      if (!resp.ok) {
+        setStatus("register-status", "Ошибка регистрации: " + text, false);
+        return;
+      }
+
+      let data = null;
+      try { data = JSON.parse(text); } catch {}
+
+      setStatus(
+        "register-status",
+        data && data.username
+          ? "Пользователь создан: " + data.username + ". Выполняем вход..."
+          : "Пользователь создан. Выполняем вход...",
+        true
+      );
+
+      // сохраняем email в профиль (будет виден после логина)
+      currentEmail = email;
+
+      // Авто-логин после регистрации
+      try {
+        await loginAndInit(username, password);
+      } catch (loginErr) {
+        console.error(loginErr);
+        setStatus("login-status", loginErr.message, false);
+      }
+    } catch (err) {
+      console.error(err);
+      setStatus("register-status", "Сетевая ошибка: " + err.message, false);
+    }
+  });
+
+  // ---------- Логин / логаут ----------
+  document.getElementById("login-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    setStatus("login-status", "Входим...", null);
+
+    const username = document.getElementById("login-username").value.trim();
+    const password = document.getElementById("login-password").value;
+
+    try {
+      await loginAndInit(username, password);
+    } catch (err) {
+      console.error(err);
+      setStatus("login-status", err.message, false);
+    }
+  });
+
+  document.getElementById("logout-btn").addEventListener("click", () => {
+    accessToken = null;
+    currentUsername = null;
+    currentEmail = null;
+    currentAvatarUrl = null; // но в localStorage аватар остаётся
+
+    editingPostId = null;
+    document.getElementById("post-title").value = "";
+    document.getElementById("post-content").value = "";
+    resetEditState();
+    updateLayoutByAuthState();
+    setStatus("login-status", "Вы вышли из системы", null);
+    loadPosts();
+  });
+
+  // ---------- Аватар (только фронт, но с сохранением в localStorage) ----------
+  document.getElementById("avatar-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    setStatus("avatar-status", "", null);
+
+    if (!accessToken || !currentUsername) {
+      setStatus("avatar-status", "Нужно войти в систему.", false);
+      return;
+    }
+
+    const fileInput = document.getElementById("avatar-file");
+    if (!fileInput.files || fileInput.files.length === 0) {
+      setStatus("avatar-status", "Выберите файл.", false);
+      return;
+    }
+
+    const file = fileInput.files[0];
+
+    // читаем файл как data URL и сохраняем
+    try {
+      const dataUrl = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(reader.error || new Error("Ошибка чтения файла"));
+        reader.readAsDataURL(file);
+      });
+
+      saveAvatarToStorageFor(currentUsername, dataUrl);
+      applyAvatarToDOM();
+      setStatus("avatar-status", "Аватар обновлён и сохранён локально.", true);
+    } catch (err) {
+      console.error(err);
+      setStatus("avatar-status", "Ошибка при чтении файла: " + err.message, false);
+    }
+  });
+
+  // ---------- Посты и редактирование ----------
+  document.getElementById("refresh-posts-btn").addEventListener("click", loadPosts);
+
+  document.getElementById("cancel-edit-btn").addEventListener("click", () => {
+    editingPostId = null;
+    document.getElementById("post-title").value = "";
+    document.getElementById("post-content").value = "";
+    resetEditState();
+  });
+
+  function resetEditState() {
+    editingPostId = null;
+    const btn = document.getElementById("create-post-btn");
+    const cancelBtn = document.getElementById("cancel-edit-btn");
+    const indicator = document.getElementById("edit-indicator");
+    const label = document.getElementById("edit-post-id-label");
+
+    btn.textContent = "Создать пост";
+    cancelBtn.style.display = "none";
+    indicator.style.display = "none";
+    label.textContent = "";
+  }
+
+  document.getElementById("create-post-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    setStatus("create-post-status", "", null);
+
+    if (!accessToken) {
+      setStatus("create-post-status", "Сначала войдите (нужен токен)", false);
+      return;
+    }
+
+    const title = document.getElementById("post-title").value.trim();
+    const content = document.getElementById("post-content").value.trim();
+
+    if (!title || !content) {
+      setStatus("create-post-status", "Заполните заголовок и текст", false);
+      return;
+    }
+
+    const payload = { title, content };
+
+    try {
+      let resp;
+      if (editingPostId) {
+        resp = await apiFetch("/posts/" + editingPostId, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+      } else {
+        resp = await apiFetch("/posts/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+      }
+
+      const text = await resp.text();
+      if (!resp.ok) {
+        setStatus(
+          "create-post-status",
+          (editingPostId ? "Ошибка обновления: " : "Ошибка создания: ") + text,
+          false
+        );
+        return;
+      }
+
+      setStatus(
+        "create-post-status",
+        editingPostId ? "Пост обновлён" : "Пост создан",
+        true
+      );
+      document.getElementById("post-title").value = "";
+      document.getElementById("post-content").value = "";
+      resetEditState();
+      loadPosts();
+    } catch (err) {
+      console.error(err);
+      setStatus("create-post-status", "Сетевая ошибка: " + err.message, false);
+    }
+  });
+
+  async function loadPosts() {
+    const container = document.getElementById("posts-container");
+    container.innerHTML = "<div class='muted'>Загрузка...</div>";
+
+    try {
+      const resp = await apiFetch("/posts/", { method: "GET" });
+      if (!resp.ok) {
+        const text = await resp.text();
+        container.innerHTML = "<div class='status err'>Ошибка загрузки постов: " + text + "</div>";
+        return;
+      }
+      const data = await resp.json();
+      if (!Array.isArray(data) || data.length === 0) {
+        container.innerHTML = "<div class='muted'>Постов пока нет.</div>";
+        return;
+      }
+
+      container.innerHTML = "";
+      data.forEach((post) => {
+        const div = document.createElement("div");
+        div.className = "post-card";
+
+        const created = post.created_at ? formatDate(post.created_at) : "";
+        const owner = post.owner_id != null ? `owner_id: ${post.owner_id}` : "";
+
+        div.innerHTML = `
+          <div class="post-title">${escapeHtml(post.title || "")}</div>
+          <div class="post-meta">
+            <span>#${post.id}</span>
+            ${created ? `<span>· ${created}</span>` : ""}
+            ${owner ? `<span>· ${owner}</span>` : ""}
+          </div>
+          <div class="post-content">${escapeHtml(post.content || "")}</div>
+          <div class="post-actions">
+            <button type="button" class="secondary small" data-action="open">Открыть</button>
+            <button type="button" class="secondary small" data-action="edit">Редактировать</button>
+            <button type="button" class="danger small" data-action="delete">Удалить</button>
+            <button type="button" class="like-button small" data-action="like-toggle">
+              ❤️ <span data-role="likes-count">0</span>
+            </button>
+            <button type="button" class="secondary small" data-action="toggle-comments">Комментарии</button>
+            ${post.owner_id ? `<button type="button" class="secondary small" data-action="follow">Подписаться на автора</button>` : ""}
+          </div>
+          <div class="comments-panel" data-role="comments-panel">
+            <div class="comments-list" data-role="comments-list">
+              <div class="muted">Комментарии еще не загружены.</div>
+            </div>
+            <div data-role="comment-form">
+              <textarea data-role="comment-input" placeholder="Ваш комментарий..."></textarea>
+              <button type="button" class="small" data-action="send-comment">Отправить</button>
+            </div>
+          </div>
+        `;
+
+        const commentsPanel = div.querySelector("[data-role='comments-panel']");
+        const commentsList = div.querySelector("[data-role='comments-list']");
+        const commentInput = div.querySelector("[data-role='comment-input']");
+        const likeButton = div.querySelector(".like-button");
+
+        const btns = div.querySelectorAll("button");
+        btns.forEach((btn) => {
+          const action = btn.dataset.action;
+          btn.addEventListener("click", () => {
+            handlePostAction({
+              action,
+              post,
+              likeButton,
+              commentsPanel,
+              commentsList,
+              commentInput,
+            });
+          });
+        });
+
+        container.appendChild(div);
+        refreshLikesCount(post.id, likeButton);
+      });
+    } catch (err) {
+      console.error(err);
+      container.innerHTML = "<div class='status err'>Сетевая ошибка: " + err.message + "</div>";
+    }
+  }
+
+  async function handlePostAction(ctx) {
+    const { action, post, likeButton, commentsPanel, commentsList, commentInput } = ctx;
+    if (!post || !post.id) return;
+
+    if (action === "open") {
+      document.getElementById("post-title").value = post.title || "";
+      document.getElementById("post-content").value = post.content || "";
+      return;
+    }
+
+    if (action === "edit") {
+      if (!accessToken) {
+        alert("Сначала войдите (нужен токен).");
+        return;
+      }
+      editingPostId = post.id;
+      document.getElementById("post-title").value = post.title || "";
+      document.getElementById("post-content").value = post.content || "";
+
+      const btn = document.getElementById("create-post-btn");
+      const cancelBtn = document.getElementById("cancel-edit-btn");
+      const indicator = document.getElementById("edit-indicator");
+      const label = document.getElementById("edit-post-id-label");
+
+      btn.textContent = "Сохранить изменения";
+      cancelBtn.style.display = "inline-flex";
+      indicator.style.display = "inline-flex";
+      label.textContent = "#" + post.id;
+      return;
+    }
+
+    if (action === "delete") {
+      if (!accessToken) {
+        alert("Сначала войдите (нужен токен).");
+        return;
+      }
+      if (!confirm("Удалить пост #" + post.id + "?")) return;
+      try {
+        const resp = await apiFetch("/posts/" + post.id, { method: "DELETE" });
+        if (!resp.ok) {
+          const text = await resp.text();
+          alert("Ошибка удаления: " + text);
+        } else {
+          if (editingPostId === post.id) {
+            resetEditState();
+            document.getElementById("post-title").value = "";
+            document.getElementById("post-content").value = "";
+          }
+          loadPosts();
+        }
+      } catch (err) {
+        alert("Сетевая ошибка: " + err.message);
+      }
+      return;
+    }
+
+    if (action === "like-toggle") {
+      if (!accessToken) {
+        alert("Нужен вход, чтобы лайкать.");
+        return;
+      }
+      try {
+        const resp = await apiFetch("/posts/" + post.id + "/like", { method: "POST" });
+        const text = await resp.text();
+        if (!resp.ok) {
+          alert("Ошибка лайка: " + text);
+        } else {
+          refreshLikesCount(post.id, likeButton);
+        }
+      } catch (err) {
+        alert("Сетевая ошибка: " + err.message);
+      }
+      return;
+    }
+
+    if (action === "toggle-comments") {
+      if (commentsPanel.style.display === "block") {
+        commentsPanel.style.display = "none";
+      } else {
+        commentsPanel.style.display = "block";
+        loadCommentsForPost(post.id, commentsList);
+      }
+      return;
+    }
+
+    if (action === "send-comment") {
+      if (!accessToken) {
+        alert("Нужен вход, чтобы оставлять комментарии.");
+        return;
+      }
+      const text = (commentInput.value || "").trim();
+      if (!text) {
+        alert("Комментарий не должен быть пустым.");
+        return;
+      }
+      try {
+        const resp = await apiFetch("/posts/" + post.id + "/comments", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ content: text }),
+        });
+        const body = await resp.text();
+        if (!resp.ok) {
+          alert("Ошибка добавления комментария: " + body);
+        } else {
+          commentInput.value = "";
+          loadCommentsForPost(post.id, commentsList);
+        }
+      } catch (err) {
+        alert("Сетевая ошибка: " + err.message);
+      }
+      return;
+    }
+
+    if (action === "follow") {
+      if (!accessToken) {
+        alert("Нужен вход, чтобы подписываться.");
+        return;
+      }
+      if (!post.owner_id) {
+        alert("У поста нет owner_id, не на кого подписываться.");
+        return;
+      }
+      try {
+        const resp = await apiFetch("/users/" + post.owner_id + "/follow", {
+          method: "POST",
+        });
+        const body = await resp.text();
+        if (!resp.ok) {
+          alert("Ошибка подписки: " + body);
+        } else {
+          loadFollowInfo();
+          alert("Подписка/поддержка связи обновлена.");
+        }
+      } catch (err) {
+        alert("Сетевая ошибка: " + err.message);
+      }
+      return;
+    }
+  }
+
+  async function refreshLikesCount(postId, likeButton) {
+    if (!likeButton) return;
+    const countEl = likeButton.querySelector("[data-role='likes-count']");
+    if (!countEl) return;
+    try {
+      const resp = await apiFetch("/posts/" + postId + "/likes", { method: "GET" });
+      if (!resp.ok) {
+        countEl.textContent = "?";
+        return;
+      }
+      const data = await resp.json();
+      countEl.textContent = data.likes_count ?? 0;
+    } catch (err) {
+      console.error(err);
+      countEl.textContent = "?";
+    }
+  }
+
+  // ---------- Комментарии ----------
+  async function loadCommentsForPost(postId, listEl) {
+    listEl.innerHTML = "<div class='muted'>Загрузка комментариев...</div>";
+    try {
+      const resp = await apiFetch("/posts/" + postId + "/comments", { method: "GET" });
+      if (!resp.ok) {
+        const text = await resp.text();
+        listEl.innerHTML = "<div class='status err'>Ошибка: " + text + "</div>";
+        return;
+      }
+      const data = await resp.json();
+      if (!Array.isArray(data) || data.length === 0) {
+        listEl.innerHTML = "<div class='muted'>Комментариев пока нет.</div>";
+        return;
+      }
+      listEl.innerHTML = "";
+      data.forEach((c) => {
+        const div = document.createElement("div");
+        div.className = "comment-item";
+        div.innerHTML = `
+          <div class="comment-meta">
+            #${c.id}
+            ${c.user_id ? ` · user_id: ${c.user_id}` : ""}
+            ${c.created_at ? " · " + formatDate(c.created_at) : ""}
+          </div>
+          <div class="comment-text">${escapeHtml(c.content || "")}</div>
+        `;
+        listEl.appendChild(div);
+      });
+    } catch (err) {
+      console.error(err);
+      listEl.innerHTML = "<div class='status err'>Сетевая ошибка: " + err.message + "</div>";
+    }
+  }
+
+  // ---------- Подписки ----------
+  async function loadFollowInfo() {
+    const followingEl = document.getElementById("following-list");
+    const followersEl = document.getElementById("followers-list");
+
+    followingEl.textContent = "Загрузка...";
+    followersEl.textContent = "Загрузка...";
+
+    if (!accessToken) {
+      followingEl.textContent = "Требуется вход.";
+      followersEl.textContent = "Требуется вход.";
+      return;
+    }
+
+    try {
+      const [followingResp, followersResp] = await Promise.all([
+        apiFetch("/users/me/following", { method: "GET" }),
+        apiFetch("/users/me/followers", { method: "GET" }),
+      ]);
+
+      if (followingResp.ok) {
+        const data = await followingResp.json();
+        if (!Array.isArray(data) || data.length === 0) {
+          followingEl.textContent = "Пока ни на кого не подписаны.";
+        } else {
+          followingEl.innerHTML = "";
+          data.forEach((f) => {
+            const item = document.createElement("div");
+            item.className = "list-item";
+            item.textContent = `user_id: ${f.user_id}`;
+            followingEl.appendChild(item);
+          });
+        }
+      } else {
+        followingEl.textContent = "Ошибка загрузки.";
+      }
+
+      if (followersResp.ok) {
+        const data = await followersResp.json();
+        if (!Array.isArray(data) || data.length === 0) {
+          followersEl.textContent = "Пока нет подписчиков.";
+        } else {
+          followersEl.innerHTML = "";
+          data.forEach((f) => {
+            const item = document.createElement("div");
+            item.className = "list-item";
+            item.textContent = `follower_id: ${f.follower_id}`;
+            followersEl.appendChild(item);
+          });
+        }
+      } else {
+        followersEl.textContent = "Ошибка загрузки.";
+      }
+    } catch (err) {
+      console.error(err);
+      followingEl.textContent = "Сетевая ошибка.";
+      followersEl.textContent = "Сетевая ошибка.";
+    }
+  }
+
+  // ---------- Старт ----------
+  updateLayoutByAuthState();
+  loadPosts();
+</script>
+</body>
+</html>
